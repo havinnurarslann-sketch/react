@@ -1,0 +1,84 @@
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+const scenarios = [
+  {
+    text: "Sepetinde 3 elma var, 2 elma daha aldın. Kaç elma oldu?",
+    type: "toplama",
+    answer: 5,
+    items: { base: 3, change: 2 },
+  },
+  {
+    text: "5 armudun var, 2’sini arkadaşına verdin. Kaç kaldı?",
+    type: "çıkarma",
+    answer: 3,
+    items: { base: 5, change: -2 },
+  },
+  {
+    text: "2 muzun var, 4 muz daha aldın. Kaç muz oldu?",
+    type: "toplama",
+    answer: 6,
+    items: { base: 2, change: 4 },
+  },
+];
+
+export default function AlisverisBahcesi() {
+  const [step, setStep] = useState(0);
+  const [feedback, setFeedback] = useState(null);
+
+  const current = scenarios[step];
+
+  const checkAnswer = (choice) => {
+    if (choice === current.type) {
+      setFeedback("doğru");
+      setTimeout(() => {
+        setStep((prev) => (prev + 1) % scenarios.length);
+        setFeedback(null);
+      }, 2000);
+    } else {
+      setFeedback("yanlış");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-green-100 p-4">
+      <Card className="max-w-md w-full text-center shadow-xl rounded-2xl">
+        <CardContent className="p-6 space-y-4">
+          <h1 className="text-xl font-bold text-green-700">🍎 Alışveriş Bahçesi</h1>
+          <p className="text-lg">{current.text}</p>
+
+          <div className="flex gap-4 justify-center">
+            <Button onClick={() => checkAnswer("toplama")} className="bg-green-500 hover:bg-green-600">
+              Toplama
+            </Button>
+            <Button onClick={() => checkAnswer("çıkarma")} className="bg-red-500 hover:bg-red-600">
+              Çıkarma
+            </Button>
+          </div>
+
+          {feedback === "doğru" && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="text-green-600 font-bold text-xl"
+            >
+              🎉 Harika!
+            </motion.div>
+          )}
+
+          {feedback === "yanlış" && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-red-600 font-bold text-xl"
+            >
+              Tekrar dene! 🤔
+            </motion.div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
